@@ -3,43 +3,87 @@ import ReactDOM from 'react-dom/client'
 import {bitable, HostContainerSize} from '@lark-base-open/js-sdk';
 import {Alert, AlertProps, Button, Select, Form} from 'antd';
 import axios from "axios";
+import { initI18n } from './i18n'
+import {useTranslation} from "react-i18next";
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <LoadApp/>
+        <App/>
     </React.StrictMode>
 )
 
-let templates = [
-    {
-        title: "获取多维表格名称",
-        code: `async function main(){
+function App() {
+    const [load, setLoad] = useState(false);
+    const [loadErr, setLoadErr] = useState<any>(null)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            initI18n('en');
+            setTimeout(()=>{
+                setLoadErr(<LoadErr/>)
+
+            },1000)
+        }, 5000)
+        bitable.bridge.getLanguage().then((lang) => {
+            clearTimeout(timer)
+            initI18n(lang as any);
+            setLoad(true);
+        });
+        return () => clearTimeout(timer)
+    }, [])
+
+    if (load) {
+        return <LoadApp />
+    }
+
+    return loadErr
+}
+
+function LoadErr() {
+    const {t} = useTranslation();
+    return <div>
+        {t('load_error.1')}
+        <a target='_blank' href='https://bytedance.feishu.cn/docx/HazFdSHH9ofRGKx8424cwzLlnZc'>{t('load.guide')}</a>
+    </div>
+
+}
+
+
+function LoadApp() {
+    const {t} = useTranslation();
+    const [logs, setLogs] = useState("")
+    const [errorLogs, setErrorLogs] = useState("")
+
+    let templates = [
+        {
+            title: t("getActiveTable"),
+            code: `async function main(){
     const table = await bitable.base.getActiveTable();
     const tableName = await table.getName();
     console.log(tableName)
 }
         `
-    },
-    {
-        title: "获取多维表格所有记录",
-        code: ` async function main(){
+        },
+        {
+            title: t("getActiveTableRecordList"),
+            code: ` async function main(){
             const table = await bitable.base.getActiveTable();
             const {recordIdList} = await table.getRecordList();
             console.log(recordIdList)
         }
     `
-    },
-    {
-        title: "获取多维表格所有字段",
-        code: ` async function main(){
+        },
+        {
+            title: t("getActiveTableFieldList"),
+            code: ` async function main(){
             const table = await bitable.base.getActiveTable();
             const fields = await table.getFieldMetaList();
             console.log(fields)
             }`
-    },
-    {
-        title: "http请求",
-        code: `async function main(){
+        },
+        {
+            title: t("httpExample"),
+            code: `async function main(){
      let r = await axios.post("https://base-translator-api.replit.app/cell_translate",{
                 q: "测试脚本",
                 from: "zh",
@@ -51,26 +95,23 @@ let templates = [
             })
             console.log(r.data)
 }`
-    },
-    {
-        title: "当前表格添加一行",
-        code: `async function main(){
+        },
+        {
+            title: t("addRecord"),
+            code: `async function main(){
        let table = await bitable.base.getActiveTable();
            let fields = await table.getFieldMetaList();
            let fieldId = fields[0].id;
            await table.addRecord({
                fields: {
-                   [fieldId]: "新加的一行"
+                   [fieldId]: "${t('addNewLine')}"
                }
            })
-           console.log("添加成功")
+           console.log("${t('success')}")
 }`
-    }
-]
+        }
+    ]
 
-function LoadApp() {
-    const [logs, setLogs] = useState("")
-    const [errorLogs, setErrorLogs] = useState("")
     const [code, setCode] = useState(templates[0].code)
 
     let log = function (...args: any) {
@@ -81,14 +122,6 @@ function LoadApp() {
         })
     }
 
-    useEffect(() => {
-        const fn = async () => {
-
-
-        };
-
-        fn();
-    }, []);
 
     return <div>
         <h5 style={{
@@ -96,7 +129,7 @@ function LoadApp() {
         }}>js code runner</h5>
 
         <div>
-            <Form.Item label={"示例代码"}>
+            <Form.Item label={t("example")}>
                 <Select style={{width: "100%"}}
                         onChange={(value) => {
                             setCode(value)
@@ -146,7 +179,7 @@ function LoadApp() {
                 } catch (e:any) {
                     setErrorLogs(e.message)
                 }
-            }}>运行</Button>
+            }}>{t('run')}</Button>
         </div>
 
         <div style={{

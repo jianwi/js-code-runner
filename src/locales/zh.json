@@ -1,0 +1,11 @@
+{
+  "getActiveTable": "获取多维表格名称",
+  "getActiveTableRecordList": "获取多维表格所有记录",
+  "getActiveTableFieldList": "获取多维表格所有字段",
+  "httpExample": "HTTP 请求示例",
+  "addRecord": "添加记录",
+  "addNewLine": "新加的一行",
+  "success": "添加成功",
+  "example": "示例代码",
+  "run": "运行"
+}
