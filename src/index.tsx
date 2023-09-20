@@ -143,7 +143,7 @@ function LoadApp() {
                 try {
                     let fn = new Function("bitable", "log", "axios", codeText)
                     fn(bitable, log, axios)
-                } catch (e) {
+                } catch (e:any) {
                     setErrorLogs(e.message)
                 }
             }}>运行</Button>
