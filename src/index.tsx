@@ -7,7 +7,9 @@ import {initI18n} from './i18n'
 import {useTranslation} from "react-i18next";
 import * as monaco from 'monaco-editor';
 
+// @ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+// @ts-ignore
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
 self.MonacoEnvironment = {
@@ -46,15 +48,6 @@ function App() {
 
     if (load) {
         return <LoadApp/>
-    }else {
-        return <div style={{
-            textAlign: "center",
-            marginTop: "100px"
-        }}>
-            <div style={{
-                marginTop: "10px"
-            }}>加载中...</div>
-        </div>
     }
 
     return loadErr
@@ -98,7 +91,7 @@ function LoadApp() {
     ]
 
     const container = useRef(null);
-    const editorRef = useRef(null);
+    const editorRef:any = useRef(null);
 
     useEffect(() => {
         if (!container.current) return;
