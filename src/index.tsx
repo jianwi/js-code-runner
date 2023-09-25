@@ -6,6 +6,7 @@ import axios from "axios";
 import {initI18n} from './i18n'
 import {useTranslation} from "react-i18next";
 import * as monaco from 'monaco-editor';
+import suggestion from "./suggest"
 
 // @ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
@@ -20,6 +21,7 @@ self.MonacoEnvironment = {
         return new editorWorker()
     }
 }
+monaco.languages.typescript.javascriptDefaults.addExtraLib(suggestion, 'bitable.ts')
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
