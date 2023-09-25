@@ -72,11 +72,11 @@ function LoadApp() {
     let templates = [
         {
             title: t("getActiveTable"),
-            code: ["async function main(){", "    const table = await bitable.base.getActiveTable();", "    const tableName = await table.getName();", "    console.log(tableName)", "}"].join("\n")
+            code: ["const table = await bitable.base.getActiveTable();", "const tableName = await table.getName();", "console.log(tableName)"].join("\n")
         },
         {
             title: t("getActiveTableRecordList"),
-            code: ["async function main(){", "    const table = await bitable.base.getActiveTable();", "    const {recordIdList} = await table.getRecordList();", "    console.log(recordIdList)", "}"].join("\n")
+            code: ["const table = await bitable.base.getActiveTable();", "const {recordIdList} = await table.getRecordList();", "console.log(recordIdList)"].join("\n")
         },
         {
             title: t("getActiveTableFieldList"),
@@ -84,7 +84,7 @@ function LoadApp() {
         },
         {
             title: t("httpExample"),
-            code: ["async function main(){", "    let r = await axios.post(\"https://base-translator-api.replit.app/cell_translate\",{", "                q: \"测试脚本\",", "                from: \"zh\",", "                to: \"en\"", "            },{", "                headers:{", "                    \"Content-Type\":\"application/x-www-form-urlencoded\"", "                }", "            })", "            console.log(r.data)", "}"].join("\n")
+            code: ["let r = await axios.post(\"https://base-translator-api.replit.app/cell_translate\",{", "                q: \"测试脚本\",", "                from: \"zh\",", "                to: \"en\"", "            },{", "                headers:{", "                    \"Content-Type\":\"application/x-www-form-urlencoded\"", "                }", "            })", "console.log(r.data)"].join("\n")
         },
         {
             title: t("addRecord"),
@@ -93,7 +93,7 @@ function LoadApp() {
     ]
 
     const container = useRef(null);
-    const editorRef:any = useRef(null);
+    const editorRef: any = useRef(null);
 
     useEffect(() => {
         if (!container.current) return;
@@ -124,8 +124,8 @@ function LoadApp() {
 
 
     return <div>
-        <div style={{fontSize:"14px"}}>
-            <Form.Item style={{height:"15px"}} label={t("example")}>
+        <div style={{fontSize: "14px"}}>
+            <Form.Item style={{height: "15px"}} label={t("example")}>
                 <Select size={'small'} style={{width: "100%"}}
                         onChange={(value) => {
                             editorRef.current.setValue(value)
@@ -152,27 +152,31 @@ function LoadApp() {
                 marginTop: "10px"
             }}
             onClick={() => {
-            let code = editorRef.current.getValue()
-            console.info("运行", code)
-            setLogs("")
+                let code = editorRef.current.getValue()
+                console.info("运行", code)
+                setLogs("")
 
-            let codeText = `
+                let codeText = `
                 console.log = log;
                 
-                ${code}
-                
-                if (typeof main === "function") {
-                    main()
+                async function run(){
+                    ${code}
+                    
+                    
+                    ;if (typeof main === "function") {
+                        main()
+                    }
                 }
+                run();
                 `
 
-            try {
-                let fn = new Function("bitable", "log", "axios", codeText)
-                fn(bitable, log, axios)
-            } catch (e: any) {
-                setErrorLogs(e.message)
-            }
-        }}>{t('run')}</Button>
+                try {
+                    let fn = new Function("bitable", "log", "axios", codeText)
+                    fn(bitable, log, axios)
+                } catch (e: any) {
+                    setErrorLogs(e.message)
+                }
+            }}>{t('run')}</Button>
 
         <div style={{
             marginTop: "10px"
@@ -194,7 +198,8 @@ function LoadApp() {
             marginTop: "20px",
             fontSize: "12px",
         }}>
-            <Button type='link' target="_blank" href="https://lark-base-team.github.io/js-sdk-docs/">{t('js_doc')}</Button>
+            <Button type='link' target="_blank"
+                    href="https://lark-base-team.github.io/js-sdk-docs/">{t('js_doc')}</Button>
         </div>
     </div>
 }
