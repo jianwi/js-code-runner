@@ -124,9 +124,9 @@ function LoadApp() {
 
 
     return <div>
-        <div>
-            <Form.Item label={t("example")}>
-                <Select style={{width: "100%"}}
+        <div style={{fontSize:"14px"}}>
+            <Form.Item style={{height:"15px"}} label={t("example")}>
+                <Select size={'small'} style={{width: "100%"}}
                         onChange={(value) => {
                             editorRef.current.setValue(value)
                         }}
@@ -142,7 +142,7 @@ function LoadApp() {
 
         <div style={{
             width: "100%",
-            height: "190px",
+            height: "230px",
             overflow: "hidden",
         }} ref={container}></div>
 
@@ -190,5 +190,11 @@ function LoadApp() {
         {
             errorLogs && <Alert message={errorLogs} type="error"/>
         }
+        <div style={{
+            marginTop: "20px",
+            fontSize: "12px",
+        }}>
+            <Button type='link' target="_blank" href="https://lark-base-team.github.io/js-sdk-docs/">{t('js_doc')}</Button>
+        </div>
     </div>
 }
