@@ -10,5 +10,6 @@
   "run": "运行",
   "load_error.1":"运行项目后，请获取 webview 地址，粘贴至多维表格「扩展脚本」中使用。详见：",
   "load.guide":"开发指南",
-  "js_doc": "多维表格插件开发文档"
+  "js_doc": "多维表格插件开发文档",
+  "description": "使用 JavaScript 快速调用多维表格插件 API。 👉"
 }

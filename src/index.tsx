@@ -124,6 +124,19 @@ function LoadApp() {
 
 
     return <div>
+        <div style={{
+            fontSize: "14px",
+            borderLeft: "3px solid #1890ff",
+            paddingLeft: "10px",
+            marginBottom: "10px",
+            color: "#333",
+        }}>
+            {t("description")}  <a target="_blank"
+                                   style={{
+                                       textDecoration: "none"
+                                   }}
+                                          href="https://lark-base-team.github.io/js-sdk-docs/">{t('js_doc')}</a>
+        </div>
         <div style={{fontSize: "14px"}}>
             <Form.Item style={{height: "15px"}} label={t("example")}>
                 <Select size={'small'} style={{width: "100%"}}
@@ -144,6 +157,7 @@ function LoadApp() {
             width: "100%",
             height: "230px",
             overflow: "hidden",
+            border: "1px solid #e8e8e8"
         }} ref={container}></div>
 
         <Button
@@ -198,8 +212,6 @@ function LoadApp() {
             marginTop: "20px",
             fontSize: "12px",
         }}>
-            <Button type='link' target="_blank"
-                    href="https://lark-base-team.github.io/js-sdk-docs/">{t('js_doc')}</Button>
         </div>
     </div>
 }
