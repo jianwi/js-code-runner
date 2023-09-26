@@ -155,7 +155,7 @@ function LoadApp() {
 
         <div style={{
             width: "100%",
-            height: "230px",
+            height: "220px",
             overflow: "hidden",
             border: "1px solid #e8e8e8"
         }} ref={container}></div>
@@ -163,7 +163,7 @@ function LoadApp() {
         <Button
             type="primary"
             style={{
-                marginTop: "10px"
+                marginTop: "5px"
             }}
             onClick={() => {
                 let code = editorRef.current.getValue()
