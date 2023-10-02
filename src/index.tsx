@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react'
 import ReactDOM from 'react-dom/client'
 import {bitable, HostContainerSize} from '@lark-base-open/js-sdk';
-import {Alert, AlertProps, Button, Select, Form} from 'antd';
+import {Alert, AlertProps, Button, Select, Form, message} from 'antd';
 import axios from "axios";
 import {initI18n} from './i18n'
 import {useTranslation} from "react-i18next";
@@ -116,8 +116,20 @@ function LoadApp() {
         }
     ]
 
+    let [templateCodes, setTemplateCodes] = useState(templates.map((item,index) => {
+        let code = localStorage.getItem("code" + index) || item.code
+        return {
+            title: item.title,
+            code: code
+        }
+    }))
+
     const container = useRef(null);
     const editorRef: any = useRef(null);
+
+    const [currentCodeIndex, setCurrentCodeIndex] = useState(0)
+    const [buttonStatus, setButtonStatus] = useState(false)
+
 
     useEffect(() => {
         if (!container.current) return;
@@ -125,7 +137,7 @@ function LoadApp() {
             return;
         }
         let editor = monaco.editor.create(container.current, {
-            value: templates[0].code,
+            value: templateCodes[currentCodeIndex].code,
             language: "javascript",
             minimap: {
                 enabled: false
@@ -135,8 +147,51 @@ function LoadApp() {
             folding: true,
         });
         editorRef.current = editor
+
+        window.onkeydown = function (e) {
+            // console.log(e.ctrlKey,e.metaKey, e.keyCode)
+            // 保存代码
+            if ((e.ctrlKey || e.metaKey)&& e.keyCode == 83) {
+                e.preventDefault()
+                localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
+                message.success(t('save_success'))
+            }
+
+        }
     }, [])
 
+    useEffect(() => {
+        if (templateCodes[currentCodeIndex].code != templates[currentCodeIndex].code) {
+            // console.log(templateCodes[currentCodeIndex].code, templates[currentCodeIndex].code)
+            setButtonStatus(true)
+        }else {
+            setButtonStatus(false)
+        }
+        if (editorRef.current){
+            // @ts-ignore
+            window.listener && window.listener.dispose()
+            let code = templateCodes[currentCodeIndex].code
+            editorRef.current.setValue(code)
+            editorRef.current.focus()
+
+            // @ts-ignore
+            window.listener = editorRef.current.onDidChangeModelContent(() => {
+                setErrorLogs("")
+                setLogs("")
+                // 如何和模板一样，就不保存了
+                if (editorRef.current.getValue() == templates[currentCodeIndex].code) {
+                    // console.log("和模板一样，不保存")
+                    setButtonStatus(false)
+                    return;
+                }
+                // 保存代码到本地
+                localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
+                setButtonStatus(true)
+                templateCodes[currentCodeIndex].code = editorRef.current.getValue()
+                setTemplateCodes([...templateCodes])
+            })
+        }
+    }, [currentCodeIndex])
 
     let log = function (...args: any) {
         setLogs((prevState) => {
@@ -165,12 +220,12 @@ function LoadApp() {
             <Form.Item style={{height: "15px"}} label={t("example")}>
                 <Select size={'small'} style={{width: "100%"}}
                         onChange={(value) => {
-                            editorRef.current.setValue(value)
+                            setCurrentCodeIndex(value)
                         }}
-                        defaultValue={templates[0].code}
+                        defaultValue={0}
                 >
-                    {templates.map(item => {
-                        return <Select.Option key={item.title} value={item.code}>{item.title}</Select.Option>
+                    {templates.map((item,index) => {
+                        return <Select.Option key={item.title} value={index}>{item.title}</Select.Option>
                     })
                     }
                 </Select>
@@ -215,6 +270,17 @@ function LoadApp() {
                     setErrorLogs(e.message)
                 }
             }}>{t('run')}</Button>
+
+        {
+            buttonStatus && <Button
+                onClick={() => {
+                    editorRef.current.setValue(templates[currentCodeIndex].code)
+                    setButtonStatus(false)
+                }}
+                style={{
+                marginLeft: "8px"
+            }} type={'primary'} danger>{t('reset')}</Button>
+        }
 
         <div style={{
             marginTop: "10px"
