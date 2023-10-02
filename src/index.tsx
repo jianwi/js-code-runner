@@ -13,6 +13,30 @@ import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 // @ts-ignore
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
+
+function loadESModule(src: string) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.type = 'module'
+        script.src = src
+        script.onload = resolve
+        script.onerror = reject
+        document.head.appendChild(script)
+    })
+}
+
+function loadModule(src: string) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = src
+        script.onload = resolve
+        script.onerror = reject
+        document.head.appendChild(script)
+    })
+}
+
+
+
 self.MonacoEnvironment = {
     getWorker(_, label) {
         if (label === 'typescript' || label === 'javascript') {
@@ -84,7 +108,7 @@ function LoadApp() {
         },
         {
             title: t("httpExample"),
-            code: ["let r = await axios.post(\"https://base-translator-api.replit.app/cell_translate\",{", "                q: \"测试脚本\",", "                from: \"zh\",", "                to: \"en\"", "            },{", "                headers:{", "                    \"Content-Type\":\"application/x-www-form-urlencoded\"", "                }", "            })", "console.log(r.data)"].join("\n")
+            code: ["await loadModule('https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.min.js')","let r = await axios.post(\"https://base-translator-api.replit.app/cell_translate\",{", "                q: \"测试脚本\",", "                from: \"zh\",", "                to: \"en\"", "            },{", "                headers:{", "                    \"Content-Type\":\"application/x-www-form-urlencoded\"", "                }", "            })", "console.log(r.data)"].join("\n")
         },
         {
             title: t("addRecord"),
@@ -185,8 +209,8 @@ function LoadApp() {
                 `
 
                 try {
-                    let fn = new Function("bitable", "log", "axios", codeText)
-                    fn(bitable, log, axios)
+                    let fn = new Function("bitable", "log", "loadESModule", "loadModule", codeText)
+                    fn(bitable, log, loadModule, loadESModule)
                 } catch (e: any) {
                     setErrorLogs(e.message)
                 }
