@@ -95,6 +95,10 @@ function LoadApp() {
 
     let templates = [
         {
+            title: t("hello world"),
+            code: ["console.log(\"hello world\")","","// 加载模块",'await loadModule("https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js")','$("body").append("<div>hello world，操作dom</div>")'].join("\n")
+        },
+        {
             title: t("getActiveTable"),
             code: ["const table = await bitable.base.getActiveTable();", "const tableName = await table.getName();", "console.log(tableName)"].join("\n")
         },
