@@ -2,7 +2,6 @@ import React, {useEffect, useState, useRef} from 'react'
 import ReactDOM from 'react-dom/client'
 import {bitable, HostContainerSize} from '@lark-base-open/js-sdk';
 import {Alert, AlertProps, Button, Select, Form, message} from 'antd';
-import axios from "axios";
 import {initI18n} from './i18n'
 import {useTranslation} from "react-i18next";
 import * as monaco from 'monaco-editor';
@@ -12,18 +11,6 @@ import suggestion from "./suggest"
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 // @ts-ignore
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-
-
-function loadESModule(src: string) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script')
-        script.type = 'module'
-        script.src = src
-        script.onload = resolve
-        script.onerror = reject
-        document.head.appendChild(script)
-    })
-}
 
 function loadModule(src: string) {
     return new Promise((resolve, reject) => {
@@ -96,11 +83,15 @@ function LoadApp() {
     let templates = [
         {
             title: t("hello world"),
-            code: ["console.log(\"hello world\")","","// 加载模块",'await loadModule("https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js")','$("body").append("<div>hello world，操作dom</div>")'].join("\n")
+            code: ["console.log(\"hello world\")","","// 加载模块",'await loadModule("https://cdn.bootcdn.net/ajax/libs/moment.js/2.29.4/moment.js")','console.log(moment().format("YYYY-MM-DD HH:mm:ss"))'].join("\n")
         },
         {
             title: t("getActiveTable"),
             code: ["const table = await bitable.base.getActiveTable();", "const tableName = await table.getName();", "console.log(tableName)"].join("\n")
+        },
+        {
+            title: t("create qr code"),
+            code: ["await loadModule(\"https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js\")", "if (!document.getElementById(\"qrcode\")) {", "    let div = document.createElement(\"div\")", "    div.id = \"qrcode\"", "    document.body.appendChild(div)", "}", "const qrcode = new QRCode(document.getElementById(\"qrcode\"), {", "    text: \"https://feishu.cn\",", "    width: 128,", "    height: 128,", "    colorDark: \"#000000\",", "    colorLight: \"#ffffff\",", "    correctLevel: QRCode.CorrectLevel.H", "});"].join("\n")
         },
         {
             title: t("getActiveTableRecordList"),
@@ -268,8 +259,8 @@ function LoadApp() {
                 `
 
                 try {
-                    let fn = new Function("bitable", "log", "loadESModule", "loadModule", codeText)
-                    fn(bitable, log, loadModule, loadESModule)
+                    let fn = new Function("bitable", "log", "loadModule", codeText)
+                    fn(bitable, log, loadModule)
                 } catch (e: any) {
                     setErrorLogs(e.message)
                 }

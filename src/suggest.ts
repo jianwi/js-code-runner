@@ -2287,6 +2287,4 @@ declare const bitable: BitableApp;
 
 declare function loadModule(src: string): Promise<any>;
 
-declare function loadESModule(src: string): Promise<any>;
-
 `
