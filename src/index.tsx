@@ -142,17 +142,6 @@ function LoadApp() {
             folding: true,
         });
         editorRef.current = editor
-
-        window.onkeydown = function (e) {
-            // console.log(e.ctrlKey,e.metaKey, e.keyCode)
-            // 保存代码
-            if ((e.ctrlKey || e.metaKey)&& e.keyCode == 83) {
-                e.preventDefault()
-                localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
-                message.success(t('save_success'))
-            }
-
-        }
     }, [])
 
     useEffect(() => {
@@ -185,6 +174,17 @@ function LoadApp() {
                 templateCodes[currentCodeIndex].code = editorRef.current.getValue()
                 setTemplateCodes([...templateCodes])
             })
+
+            window.onkeydown = function (e) {
+                // console.log(e.ctrlKey,e.metaKey, e.keyCode)
+                // 保存代码
+                if ((e.ctrlKey || e.metaKey)&& e.keyCode == 83) {
+                    e.preventDefault()
+                    localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
+                    message.success(t('save_success'))
+                }
+
+            }
         }
     }, [currentCodeIndex])
 
