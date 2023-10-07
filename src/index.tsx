@@ -119,6 +119,17 @@ function LoadApp() {
         }
     }))
 
+    function updateCodeTemplates() {
+        let newTemplates = templates.map((item,index) => {
+            let code = localStorage.getItem("code" + index) || item.code
+            return {
+                title: item.title,
+                code: code
+            }
+        })
+        setTemplateCodes(newTemplates)
+    }
+
     const container = useRef(null);
     const editorRef: any = useRef(null);
 
@@ -171,8 +182,7 @@ function LoadApp() {
                 // 保存代码到本地
                 localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
                 setButtonStatus(true)
-                templateCodes[currentCodeIndex].code = editorRef.current.getValue()
-                setTemplateCodes([...templateCodes])
+                updateCodeTemplates()
             })
 
             window.onkeydown = function (e) {
@@ -182,6 +192,7 @@ function LoadApp() {
                     e.preventDefault()
                     localStorage.setItem("code" + currentCodeIndex, editorRef.current.getValue())
                     message.success(t('save_success'))
+                    updateCodeTemplates()
                 }
 
             }
