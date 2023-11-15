@@ -277,6 +277,7 @@ function LoadApp() {
                 try {
                     let fn = new Function("bitable", "log", "loadModule", codeText)
                     fn(bitable, log, loadModule)
+                    setErrorLogs("")
                 } catch (e: any) {
                     setErrorLogs(e.message)
                 }
