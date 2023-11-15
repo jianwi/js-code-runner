@@ -153,6 +153,11 @@ function LoadApp() {
             folding: true,
         });
         editorRef.current = editor
+
+        // 添加一个窗口大小变化事件监听器
+        window.addEventListener('resize', ()=>{
+            editor.layout()
+        });
     }, [])
 
     useEffect(() => {
@@ -240,7 +245,7 @@ function LoadApp() {
 
         <div style={{
             width: "100%",
-            height: "220px",
+            height: "calc(100vh - 220px)",
             overflow: "hidden",
             border: "1px solid #e8e8e8"
         }} ref={container}></div>
